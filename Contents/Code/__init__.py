@@ -67,6 +67,7 @@ def Start():
 
     if "anon_id" not in Dict:
         Dict["anon_id"] = get_identifier()
+        Log.Debug("CURRENT IDENTIFIER: %s", Dict["anon_id"])
 
     # track usage
     if bool(Prefs["track_usage"]):

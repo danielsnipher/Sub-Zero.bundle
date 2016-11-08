@@ -154,8 +154,11 @@ def get_identifier():
     except:
         pass
 
+    Log.Debug("MACHINE IDENTIFIER: %s", repr(identifier))
+
     if not identifier:
         identifier = String.UUID()
+        Log.Debug("UUID: %s", repr(identifier))
 
     return Hash.SHA1(identifier + "SUBZEROOOOOOOOOO")
 
