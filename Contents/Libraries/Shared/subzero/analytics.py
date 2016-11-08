@@ -17,10 +17,11 @@ def track_event(category=None, action=None, label=None, value=None, identifier=N
     tracker = Tracker('UA-86466078-1', 'none', conf=anonymousConfig)
     visitor = Visitor()
 
+    logger.debug("ANALYTICS IDENTIFIER DATA: %s, %s, %s"), repr(identifier[32:]), repr(
+        binascii.unhexlify(identifier[32:])), repr(visitor.unique_id)
+
     # convert the last 8 bytes of the machine identifier to an integer to get a "unique" user
     visitor.unique_id = struct.unpack("!I", binascii.unhexlify(identifier[32:]))[0]
-
-    logger.debug("ANALYTICS IDENTIFIER DATA: %s, %s, %s"), repr(identifier[32:]), repr(binascii.unhexlify(identifier[32:])), repr(visitor.unique_id)
 
     if add:
         # add visitor's ip address (will be anonymized)
