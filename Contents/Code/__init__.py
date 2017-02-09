@@ -66,6 +66,7 @@ def Start():
         return
 
     # run task scheduler
+    Log.Debug("//// RUNNING SCHEDULER")
     scheduler.run()
 
     if "anon_id" not in Dict:

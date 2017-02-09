@@ -77,6 +77,7 @@ class DefaultScheduler(object):
 
     def run(self):
         self.running = True
+        Log.Debug("//// SCHEDULER RUN REQUESTED")
         self.thread = Thread.Create(self.worker)
 
     def stop(self):
@@ -149,16 +150,21 @@ class DefaultScheduler(object):
             Log.Debug("Scheduler: Not sending signal %s to task %s, because: not running", name, task_name)
 
     def worker(self):
+        Log.Debug("//// SCHEDULER WORKER CALLED")
+        Log.Debug("//// SCHEDULER REGISTERED TASKS: %s" % self.tasks)
         Thread.Sleep(10.0)
         while 1:
             if not self.running:
+                Log.Debug("//// SCHEDULER RUNNING STATE: %s" % self.running)
                 break
 
             # single dispatch requested?
             if Dict["tasks"]["queue"]:
+                Log.Debug("//// SCHEDULER TASK QUEUE: %s" % Dict["tasks"]["queue"])
                 # work queue off
                 queue = Dict["tasks"]["queue"][:]
                 Dict["tasks"]["queue"] = []
+                Dict.Save()
                 for args, kwargs in queue:
                     Log.Debug("Dispatching single task: %s, %s", args, kwargs)
                     Thread.Create(self.run_task, True, *args, **kwargs)
@@ -168,17 +174,23 @@ class DefaultScheduler(object):
                 now = datetime.datetime.now()
                 task = info["task"]
 
+                Log.Debug("//// SCHEDULER TASK: %s" % name)
+
                 if name not in Dict["tasks"] or not task.periodic:
+                    Log.Debug("//// SCHEDULER TASK DEBUG 1: %s" % task.periodic)
                     continue
 
                 if task.running:
+                    Log.Debug("//// SCHEDULER TASK ALREADY RUNNING: %s" % name)
                     continue
 
                 frequency_num, frequency_key = info["frequency"]
+                Log.Debug("//// SCHEDULER TASK FREQUENCY %s" % info)
                 if not frequency_num:
                     continue
 
                 if not task.last_run or (task.last_run + datetime.timedelta(**{frequency_key: frequency_num}) <= now):
+                    Log.Debug("//// SCHEDULER RUNNING TASK: %s" % name)
                     self.run_task(name)
 
             Thread.Sleep(5.0)
