@@ -103,7 +103,6 @@ class LegendasTVProvider(Provider):
 
         self.session.close()
 
-    @region.cache_on_arguments(expiration_time=SHOW_EXPIRATION_TIME)
     def query(self, video, languages):
         if isinstance(video, Episode):
           termo = video.series + ' S%02d' % video.season + 'E%02d' % video.episode
